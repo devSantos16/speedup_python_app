@@ -1,7 +1,8 @@
 import time
-import xlsxwriter
 import os
 import random
+
+from model.excel import Excel
 from threading import Thread
 from threading import Lock
 from pathlib import Path
@@ -9,7 +10,8 @@ from pathlib import Path
 _CONTADOR = 2
 VETOR_A = []
 VETOR_B = []
-LOCK = Lock()
+
+_excel = Excel('tentativa.xlsx')
 
 
 def retornarVetorSequencial(_tamanho):
@@ -23,7 +25,7 @@ def retornarVetorSequencial(_tamanho):
 
     print("Tempo de Execução: {}".format(time_execution))
 
-    worksheet.write('B{}'.format(_CONTADOR), "{} segundos".format(time_execution))
+    _excel.write_worksheet('B{}'.format(_CONTADOR), "{} segundos".format(time_execution))
     print("Excel sendo processado !")
 
     _CONTADOR += 1
@@ -41,12 +43,16 @@ def retornarVetorThread(_tamanho):
 
 def gerarthread(thread, tamanho):
     resultado = thread
+
     print("Começando vetor com thread ({}) do tamanho ({})".format(resultado, tamanho))
+
     start_time = time.time()
-    for pthread in range(thread):
+    for i_thread in range(thread):
         thread = Thread(target=retornarVetorThread, args=(tamanho,))
         thread.start()
+        thread.join()
     time_execution = time.time() - start_time
+
     print("Tempo de Execução: {}".format(time_execution))
     write_excel(time_execution, tamanho, resultado)
     print("Excel sendo processado!")
@@ -54,42 +60,43 @@ def gerarthread(thread, tamanho):
 
 def write_excel(time_execution, tamanho, thread):
     if thread == 2:
-        worksheet.write('C1', "{} THREAD".format(thread))
+        _excel.write_worksheet('C1', "{} THREAD".format(thread))
         if tamanho == 1:
-            worksheet.write('C2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C2', "{} segundos".format(time_execution))
         if tamanho == 1000:
-            worksheet.write('C3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C3', "{} segundos".format(time_execution))
         if tamanho == 10000:
-            worksheet.write('C4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C4', "{} segundos".format(time_execution))
         if tamanho == 10000000:
-            worksheet.write('C5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C5', "{} segundos".format(time_execution))
 
     if thread == 5:
-        worksheet.write('D1', "{} THREAD".format(thread))
+        _excel.write_worksheet('D1', "{} THREAD".format(thread))
         if tamanho == 1:
-            worksheet.write('D2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D2', "{} segundos".format(time_execution))
         if tamanho == 1000:
-            worksheet.write('D3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D3', "{} segundos".format(time_execution))
         if tamanho == 10000:
-            worksheet.write('D4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D4', "{} segundos".format(time_execution))
         if tamanho == 10000000:
-            worksheet.write('D5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D5', "{} segundos".format(time_execution))
 
     if thread == 10:
-        worksheet.write('E1', "{} THREAD".format(thread))
+        _excel.write_worksheet('E1', "{} THREAD".format(thread))
         if tamanho == 1:
-            worksheet.write('E2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E2', "{} segundos".format(time_execution))
         if tamanho == 1000:
-            worksheet.write('E3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E3', "{} segundos".format(time_execution))
         if tamanho == 10000:
-            worksheet.write('E4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E4', "{} segundos".format(time_execution))
         if tamanho == 10000000:
-            worksheet.write('E5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E5', "{} segundos".format(time_execution))
 
 
 def moverpasta():
     hash = random.getrandbits(128)
     dir_name = 'excel'
+
     try:
         os.mkdir(dir_name)
         print("Diretório ", dir_name, "criado")
@@ -97,20 +104,20 @@ def moverpasta():
     except FileExistsError:
         print("Diretorio", dir_name, "já existe")
 
-    Path("tentativa.xlsx").rename("{}/{}.xlsx".format(dir_name, hash))
+    Path(_excel.file_name).rename("{}/{}.xlsx".format(dir_name, hash))
 
 
 if __name__ == '__main__':
     vetorNumeros = [2, 5, 10]
-    workbook = xlsxwriter.Workbook('tentativa.xlsx')
-    worksheet = workbook.add_worksheet()
 
-    worksheet.write("A1", "Carga")
-    worksheet.write('B1', "Sequencial")
-    worksheet.write('A2', 1)
-    worksheet.write('A3', 1000)
-    worksheet.write('A4', 10000)
-    worksheet.write('A5', 10000000)
+    _excel.init_workbook()
+
+    _excel.write_worksheet("A1", "Carga")
+    _excel.write_worksheet('B1', "Sequencial")
+    _excel.write_worksheet('A2', 1)
+    _excel.write_worksheet('A3', 1000)
+    _excel.write_worksheet('A4', 10000)
+    _excel.write_worksheet('A5', 10000000)
 
     retornarVetorSequencial(1)
     retornarVetorSequencial(1000)
@@ -124,8 +131,9 @@ if __name__ == '__main__':
         gerarthread(i, 10000000)
 
     print("Fechando excel !")
-    workbook.close()
+    _excel.end_workbook()
     moverpasta()
+    print("End Program !")
 
 
 
