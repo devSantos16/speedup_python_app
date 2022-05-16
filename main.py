@@ -6,38 +6,37 @@ from model.excel import Excel
 from threading import Thread
 from pathlib import Path
 
-_CONTADOR = 2
-VETOR_A = []
-VETOR_B = []
-
+_contador = 2
+vetor_a = vetor_b = []
 _excel = Excel('tentativa.xlsx')
 
 
 def retornarVetorSequencial(_tamanho):
-    global _CONTADOR
+    global _contador
 
     print("Começando Vetor Sequencial ({})".format(_tamanho))
 
     start_time = time.time()
-    retornarVetorThread(_tamanho)
+    retornarVetor(_tamanho)
     time_execution = time.time() - start_time
 
     print("Tempo de Execução: {}".format(time_execution))
 
-    _excel.write_worksheet('B{}'.format(_CONTADOR), "{} segundos".format(time_execution))
+    _excel.write_worksheet('B{}'.format(_contador), "{} segundos".format(time_execution))
+
     print("Excel sendo processado !")
 
-    _CONTADOR += 1
+    _contador += 1
 
 
-def retornarVetorThread(_tamanho):
+def retornarVetor(_tamanho):
     sum_temp = 0
     for i in range(_tamanho):
-        VETOR_A.append(_tamanho)
-        VETOR_B.append(_tamanho)
+        vetor_a.append(_tamanho)
+        vetor_b.append(_tamanho)
 
     for i in range(_tamanho):
-        sum_temp += (VETOR_A[i] * VETOR_B[i])
+        sum_temp += (vetor_a[i] * vetor_b[i])
 
 
 def gerarthread(thread, tamanho):
@@ -47,7 +46,7 @@ def gerarthread(thread, tamanho):
 
     start_time = time.time()
     for i_thread in range(thread):
-        thread = Thread(target=retornarVetorThread, args=(tamanho,))
+        thread = Thread(target=retornarVetor, args=(tamanho,))
         thread.start()
         thread.join()
     time_execution = time.time() - start_time
@@ -55,6 +54,7 @@ def gerarthread(thread, tamanho):
     print("Tempo de Execução: {}".format(time_execution))
     # metodo
     write_excel(time_execution, tamanho, resultado)
+
     print("Excel sendo processado!")
 
 
@@ -102,7 +102,7 @@ def moverpasta():
         print("Diretório ", dir_name, "criado")
 
     except FileExistsError:
-        print("Diretorio", dir_name, "já existe")
+        print("Diretorio", dir_name, "já existe, inserindo o arquivo na pasta {}".format(dir_name))
 
     Path(_excel.file_name).rename("{}/{}.xlsx".format(dir_name, hash))
 
