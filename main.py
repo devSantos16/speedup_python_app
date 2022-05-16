@@ -4,7 +4,6 @@ import random
 
 from model.excel import Excel
 from threading import Thread
-from threading import Lock
 from pathlib import Path
 
 _CONTADOR = 2
@@ -54,6 +53,7 @@ def gerarthread(thread, tamanho):
     time_execution = time.time() - start_time
 
     print("Tempo de Execução: {}".format(time_execution))
+    # metodo
     write_excel(time_execution, tamanho, resultado)
     print("Excel sendo processado!")
 
