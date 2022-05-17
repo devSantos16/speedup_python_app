@@ -1,4 +1,5 @@
 import xlsxwriter
+from threading import Thread
 
 
 class Excel:
@@ -13,10 +14,11 @@ class Excel:
         self.worksheet = self.workbook.add_worksheet()
 
     def end_workbook(self):
+
         self.workbook.close()
 
-    def write_worksheet(self, celula, response):
-        self.worksheet.write(celula, response)
+    def write_worksheet(self, cell, response):
+        self.worksheet.write(cell, response)
 
 
 
