@@ -1,11 +1,10 @@
-import threading
 import time
 import os
 import random
 
 from model.excel import Excel
-from threading import Thread
 from pathlib import Path
+from multiprocessing import Pool
 
 _count = 2
 _array_a = _array_b = []
@@ -40,32 +39,22 @@ def return_array(size):
     print(f"Tamanho e soma dos vetores: {local_sum} ({size})")
 
 
-def generate_thread(num_thread, size):
-    result_thread = num_thread
-    threads = []
+def generate_thread(num_process, size):
+    pool = Pool(num_process)
+    result_process = num_process
 
-    print(f"Começando vetor com thread ({result_thread}) do tamanho ({size})")
+    print(f"Começando vetor com processo ({result_process}) do tamanho ({size})")
 
-    # start thread
-    increment = 0
     start = time.time()
-
-    while increment < num_thread:
-        thread = Thread(target=return_array, args=(size,))
-        thread.start()
-        threads.append(thread)
-        print(f"Numeros de thread: {threading.active_count()}")
-        increment += 1
-
-    for thread in threads:
-        thread.join()
-
+    pool.apply_async(return_array, size)
+    pool.close()
+    pool.join()
     end = time.time()
+
     time_execution = end - start
 
-    print(f"Fim da vetorização {result_thread} ! Numeros de thread rodando agora: {threading.active_count()}")
     print(f"Tempo de Execução: {time_execution}")
-    write_excel(time_execution, size, result_thread)
+    write_excel(time_execution, size, result_process)
     print("Excel sendo processado!")
 
 
@@ -73,45 +62,45 @@ def write_excel(time_execution, size, thread):
     if thread == 1:
         _excel.write_worksheet('C1', "{} THREAD".format(thread))
         if size == 1:
-            _excel.write_worksheet('C2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C2', "{}s".format(time_execution))
         if size == 1000:
-            _excel.write_worksheet('C3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C3', "{}s".format(time_execution))
         if size == 10000:
-            _excel.write_worksheet('C4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C4', "{}s".format(time_execution))
         if size == 10000000:
-            _excel.write_worksheet('C5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('C5', "{}s".format(time_execution))
     if thread == 2:
         _excel.write_worksheet('D1', "{} THREAD".format(thread))
         if size == 1:
-            _excel.write_worksheet('D2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D2', "{}s".format(time_execution))
         if size == 1000:
-            _excel.write_worksheet('D3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D3', "{}s".format(time_execution))
         if size == 10000:
-            _excel.write_worksheet('D4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D4', "{}s".format(time_execution))
         if size == 10000000:
-            _excel.write_worksheet('D5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('D5', "{}s".format(time_execution))
 
     if thread == 5:
         _excel.write_worksheet('E1', "{} THREAD".format(thread))
         if size == 1:
-            _excel.write_worksheet('E2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E2', "{}s".format(time_execution))
         if size == 1000:
-            _excel.write_worksheet('E3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E3', "{}s".format(time_execution))
         if size == 10000:
-            _excel.write_worksheet('E4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E4', "{}s".format(time_execution))
         if size == 10000000:
-            _excel.write_worksheet('E5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('E5', "{}s".format(time_execution))
 
     if thread == 10:
         _excel.write_worksheet('F1', "{} THREAD".format(thread))
         if size == 1:
-            _excel.write_worksheet('F2', "{} segundos".format(time_execution))
+            _excel.write_worksheet('F2', "{}s".format(time_execution))
         if size == 1000:
-            _excel.write_worksheet('F3', "{} segundos".format(time_execution))
+            _excel.write_worksheet('F3', "{}s".format(time_execution))
         if size == 10000:
-            _excel.write_worksheet('F4', "{} segundos".format(time_execution))
+            _excel.write_worksheet('F4', "{}s".format(time_execution))
         if size == 10000000:
-            _excel.write_worksheet('F5', "{} segundos".format(time_execution))
+            _excel.write_worksheet('F5', "{}s".format(time_execution))
 
 
 def move_path():
