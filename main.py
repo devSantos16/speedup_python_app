@@ -31,11 +31,13 @@ def return_array(size):
     local_sum = 0
 
     for increment in range(size):
-        _array_a.append(size)
-        _array_b.append(size)
+        _array_a.append(1)
+        _array_b.append(1)
 
     for increment in range(size):
         local_sum += (_array_a[increment] * _array_b[increment])
+
+    print(f"Tamanho e soma dos vetores: {local_sum} ({size})")
 
 
 def generate_thread(num_thread, size):
