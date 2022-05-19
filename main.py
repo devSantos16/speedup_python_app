@@ -39,7 +39,7 @@ def return_array(size):
     print(f"Tamanho e soma dos vetores: {local_sum} ({size})")
 
 
-def generate_thread(num_process, size):
+def generate_process(num_process, size):
     pool = Pool(num_process)
     result_process = num_process
 
@@ -54,53 +54,32 @@ def generate_thread(num_process, size):
     time_execution = end - start
 
     print(f"Tempo de Execução: {time_execution}")
-    write_excel(time_execution, size, result_process)
+    verify_process(time_execution, size, result_process)
     print("Excel sendo processado!")
 
 
-def write_excel(time_execution, size, thread):
-    if thread == 1:
-        _excel.write_worksheet('C1', "{} THREAD".format(thread))
-        if size == 1:
-            _excel.write_worksheet('C2', "{}s".format(time_execution))
-        if size == 1000:
-            _excel.write_worksheet('C3', "{}s".format(time_execution))
-        if size == 10000:
-            _excel.write_worksheet('C4', "{}s".format(time_execution))
-        if size == 10000000:
-            _excel.write_worksheet('C5', "{}s".format(time_execution))
-    if thread == 2:
-        _excel.write_worksheet('D1', "{} THREAD".format(thread))
-        if size == 1:
-            _excel.write_worksheet('D2', "{}s".format(time_execution))
-        if size == 1000:
-            _excel.write_worksheet('D3', "{}s".format(time_execution))
-        if size == 10000:
-            _excel.write_worksheet('D4', "{}s".format(time_execution))
-        if size == 10000000:
-            _excel.write_worksheet('D5', "{}s".format(time_execution))
+def verify_process(time_execution, size, process):
+    array_size = [1, 1000, 10000, 10000000]
 
-    if thread == 5:
-        _excel.write_worksheet('E1', "{} THREAD".format(thread))
-        if size == 1:
-            _excel.write_worksheet('E2', "{}s".format(time_execution))
-        if size == 1000:
-            _excel.write_worksheet('E3', "{}s".format(time_execution))
-        if size == 10000:
-            _excel.write_worksheet('E4', "{}s".format(time_execution))
-        if size == 10000000:
-            _excel.write_worksheet('E5', "{}s".format(time_execution))
+    if process == 1:
+        write_excel(array_size, size, process, time_execution, 'C')
 
-    if thread == 10:
-        _excel.write_worksheet('F1', "{} THREAD".format(thread))
-        if size == 1:
-            _excel.write_worksheet('F2', "{}s".format(time_execution))
-        if size == 1000:
-            _excel.write_worksheet('F3', "{}s".format(time_execution))
-        if size == 10000:
-            _excel.write_worksheet('F4', "{}s".format(time_execution))
-        if size == 10000000:
-            _excel.write_worksheet('F5', "{}s".format(time_execution))
+    if process == 2:
+        write_excel(array_size, size, process, time_execution, 'D')
+
+    if process == 5:
+        write_excel(array_size, size, process, time_execution, 'E')
+
+    if process == 10:
+        write_excel(array_size, size, process, time_execution, 'F')
+
+
+def write_excel(array_size, size, thread, time_execution, letter):
+    _excel.write_worksheet(f'{letter}1', "{} THREAD".format(thread))
+    for element_array_size in array_size:
+        if size == element_array_size:
+            result_index = array_size.index(element_array_size)
+            _excel.write_worksheet(f'{letter}{result_index + 2}', "{}s".format(time_execution))
 
 
 def move_path():
@@ -135,10 +114,10 @@ if __name__ == '__main__':
     return_serial_array(10000000)
 
     for i in array_numbers_thread:
-        generate_thread(i, 1)
-        generate_thread(i, 1000)
-        generate_thread(i, 10000)
-        generate_thread(i, 10000000)
+        generate_process(i, 1)
+        generate_process(i, 1000)
+        generate_process(i, 10000)
+        generate_process(i, 10000000)
 
     print("Fechando excel !")
     _excel.end_workbook()

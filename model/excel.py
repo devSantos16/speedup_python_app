@@ -1,5 +1,4 @@
 import xlsxwriter
-from threading import Thread
 
 
 class Excel:
